@@ -21,20 +21,20 @@ describe('ripple_quote', function() {
       .catch(done);
   });
 
-  it('.validate() should fail to validate a ripple quote (amount)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_amount), new Error('Destination amount is not valid number'));
+  it('.validate() should fail to validate a ripple quote (destination amount)', function() {
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_amount), 'Destination amount is not a valid number');
   });
 
-  it('.validate() should fail to validate a ripple quote (currency)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_currency), 'Currency is not valid');
+  it('.validate() should fail to validate a ripple quote (destination currency)', function() {
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_currency), 'Destination currency is not valid');
   });
 
-  it('.validate() should fail to validate a ripple quote (address)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_address), 'Address is not a valid ripple address');
+  it('.validate() should fail to validate a ripple quote (destination address)', function() {
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_address), 'Destination address is not a valid ripple address');
   });
 
-  it('.validate() should fail to validate a ripple quote (issuer)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.source_address), 'Issuer is not a valid ripple address');
+  it('.validate() should fail to validate a ripple quote (source address)', function() {
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.source_address), 'Source address is not a valid ripple address');
   });
 
   it('.build() calls ripple-rest with the provided args', function(done) {
