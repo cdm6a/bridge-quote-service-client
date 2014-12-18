@@ -1,6 +1,6 @@
 {
   "name": "bridge-quote-service-client",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Client library used for interacting with the bridge-quote-service",
   "main": "index.js",
   "scripts": {
