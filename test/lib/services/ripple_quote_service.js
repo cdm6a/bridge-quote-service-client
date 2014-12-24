@@ -22,19 +22,19 @@ describe('ripple_quote', function() {
   });
 
   it('.validate() should fail to validate a ripple quote (destination amount)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_amount), 'Destination amount is not a valid number');
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_amount), /Destination amount is not a valid number/);
   });
 
   it('.validate() should fail to validate a ripple quote (destination currency)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_currency), 'Destination currency is not valid');
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_currency), /Destination currency is not valid/);
   });
 
   it('.validate() should fail to validate a ripple quote (destination address)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_address), 'Destination address is not a valid ripple address');
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.destination_address), /Destination address is not a valid ripple address/);
   });
 
   it('.validate() should fail to validate a ripple quote (source address)', function() {
-    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.source_address), 'Source address is not a valid ripple address');
+    return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.source_address), /Source address is not a valid ripple address/);
   });
 
   it('.build() calls ripple-rest with the provided args', function(done) {
