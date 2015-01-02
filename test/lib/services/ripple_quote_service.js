@@ -10,9 +10,9 @@ var fixture            = require(__dirname + '/../../fixtures/ripple_quote_reque
 describe('ripple_quote', function() {
 
   chai.use(chaiAsPromised);
+
   var rippleQuoteService = new RippleQuoteService({
-    logger: winston,
-    rippleRestUrl: 'https://api.ripple.com/'
+    logger: winston
   });
 
   it('.validate() should successfully validate a ripple quote request', function(done) {
@@ -37,27 +37,41 @@ describe('ripple_quote', function() {
     return chai.assert.isRejected(rippleQuoteService.validate(fixture.invalid.source_address), /Source address is not a valid ripple address/);
   });
 
+  it('.build() should handle an error returned by ripple-rest', function() {
+    rippleQuoteService.rippleRestClient.buildPayment = sinon.stub(RippleRestClient.prototype, 'buildPayment')
+      .yields(new Error('Bad fooblah'), null);
+    try {
+      return chai.assert.isRejected(rippleQuoteService.build(fixture.valid), /Bad fooblah/);
+    } finally {
+      rippleQuoteService.rippleRestClient.buildPayment.restore();
+    }
+  });
+
   it('.build() calls ripple-rest with the provided args', function(done) {
-    var stub = sinon.stub(RippleRestClient.prototype, 'buildPayment')
+    rippleQuoteService.rippleRestClient.buildPayment = sinon.stub(RippleRestClient.prototype, 'buildPayment')
       .yields(null, fixture.ripple_rest_response.valid);
-    rippleQuoteService.build(fixture.valid)
-      .then(function() {
-        chai.assert.ok(stub.withArgs({
-          amount: fixture.valid.destination.amount,
-          currency: fixture.valid.destination.currency,
-          recipient: fixture.valid.destination.address,
-          source_currencies: fixture.valid.source.currencies
-        }).called);
-        stub.restore();
-        done();
-      })
-      .catch(function(error) {
-        stub.restore();
-        if (util.isError(error)) {
-          done(error);
-        } else {
-          done(new Error(JSON.stringify(error)));
-        }
-      });
+    try {
+      rippleQuoteService.build(fixture.valid)
+        .then(function () {
+          chai.assert.ok(rippleQuoteService.rippleRestClient.buildPayment.withArgs({
+            amount: fixture.valid.destination.amount,
+            currency: fixture.valid.destination.currency,
+            recipient: fixture.valid.destination.address,
+            source_currencies: fixture.valid.source.currencies
+          }).called);
+          rippleQuoteService.rippleRestClient.buildPayment.restore();
+          done();
+        })
+        .catch(function (error) {
+          rippleQuoteService.rippleRestClient.buildPayment.restore();
+          if (util.isError(error)) {
+            done(error);
+          } else {
+            done(new Error(JSON.stringify(error)));
+          }
+        });
+    } finally {
+      rippleQuoteService.rippleRestClient.buildPayment;
+    }
   });
 });
